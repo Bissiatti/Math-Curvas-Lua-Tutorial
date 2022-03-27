@@ -281,7 +281,6 @@ O código seguinte, está disponível na pasta "./codigos/calculo.lua". Esse có
 
 ```lua
 require('symmath').setup()
-local gnuplot = require 'gnuplot'
 
 -- Definição das variáveis simbólicas
 
@@ -345,20 +344,166 @@ print(M)
 
 -- Matriz transposta
 
-print("Matriz transposta")
+print("Matriz transposta:")
 
 Mt = M:T()
 print(M)
 
-print("Calculo do determinante de M^t")
+print("Calculo do determinante da Matriz transposta:")
 
 print(Mt:determinant())
 ```
+Saida esperada no terminal
+```
+Função f:
+\alpha * sin(x)
+
+Definindo a derivada:
+  ∂                  
+╶──╴(\alpha * sin(x))
+ ∂x                  
+Derivada calculada de f
+\alpha * cos(x)
+
+Integral indefinifa de f
+ - \alpha * cos(x)
+integral definifa de f de 0 a t:
+\alpha * (1 - cos(t))
+
+Trabalhando com vetores:
+v=
+┌ ┐
+│4│
+│ │
+│3│
+└ ┘
+Norma do Vetor v:
+5
+Matriz:
+┌    ┐
+│4  3│
+│    │
+│x  y│
+└    ┘
+Matriz transposta:
+┌    ┐
+│4  3│
+│    │
+│x  y│
+└    ┘
+Calculo do determinante da Matriz transposta:
+ - 3 * x + 4 * y
+```
+
+
 ### Exportando as expressões simbólicas.
 
-É interessante não só construir calcular expressões simbólicas em uma linguagem de programação, mas também, é útil exportar essas funções para a linguagem, para um documento LaTex ou o gráfico da função como uma imagem.
+É interessante não só construir calcular expressões simbólicas em uma linguagem de programação, mas também, é útil exportar essas funções para a linguagem, para um documento LaTex ou o gráfico da função como uma imagem. Veja o código do arquivo "codigos/exportar.lua"
+
+```lua
+require('symmath').setup()
+local x,t = vars("x","t")
+
+-- Definindo uma função qualquer
+local f = x*sin(x)+x
+
+print("Função f como expressão simbólica:")
+print(f)
+-- Exportando a função para LaTex
+
+local fLatex = symmath.export.LaTeX(f)
+
+print("\nfunção f exportada para LaTex:")
+
+print(fLatex)
+
+-- Exportar para uma função em lua:
+
+-- Para exportar é preciso passar um table com as variáveis
+local funcLua, code = f:compile({x})
+
+print("\nImprimido o código da função traduzido para a linguagem lua:")
+print(code)
+
+print("Imprimido alguns valores da função")
+
+print("x=0","f(x)="..funcLua(0),"x=pi/2","f(x)="..funcLua(math.pi/2),"x=pi","f(x)="..funcLua(math.pi))
+```
+Saida esperada:
+
+```
+Função f como expressão simbólica:
+x * sin(x) + x
+
+função f exportada para LaTex:
+${{{x}} {{\sin\left(  x\right)}}} + {x}$
+
+Imprimido o código da função traduzido para a linguagem lua:
+return function (x)
+        local out1 = x + x * math.sin(x)
+        return out1
+end
+Imprimido alguns valores da função
+x=0     f(x)=0.0        x=pi/2  f(x)=3.1415926535898    x=pi    f(x)=3.1415926535898
+```
+### Gráficos de funções com GnuPlot.
+
+A biblioteca gnuplot é resumidamente uma função para chamar o gnuplot de terminal dentro do lua. Então, tudo que o gnuplot faz é possível fazer com essa biblioteca, veja alguns exemplos:
+
+```lua
+require('symmath').setup()
+local gnuplot = require 'gnuplot'
+
+local x,y = vars("x","y")
+
+-- Plot de uma função em R^2
+local plotStr = {
+    "set term svg", -- Define o tipo de imagem como svg (por padrão é png)
+    "set grid", -- Imagem com grade
+    "set xrange [-pi:pi]", -- Define o intervalo de x
+    "set yrange [-pi:pi]", -- Define o itervalo de y
+    output="imgs/plotStr.svg", -- Define o arquivo de saida
+    {"sin(x)"} -- Table com a função que queremos imprimir em string
+}
+
+-- Para gerar o gráfico basta passar para o gnuplot a table com os parâmetros de plot
+gnuplot(plotStr)
 
 
+local g = x^2-2*x+5
+
+print(g)
+
+-- Para transformar em uma string para o GnuPlot basta exportar como tal
+g = symmath.export.GnuPlot(g)
+
+print(g)
+
+local plotSymmath = {
+    "set term svg", -- Define o tipo de imagem como svg (por padrão é png)
+    "set grid", -- Imagem com grade
+    "set xrange [-10:10]", -- Define o intervalo de x
+    "set yrange [-25:100]", -- Define o itervalo de y
+    output="imgs/plotSymmath.svg", -- Define o arquivo de saida
+    {g} -- Table com a função esper
+}
+
+gnuplot(plotSymmath)
+```
+
+Da saida do terminal temos:
+
+```
+ 2            
+x  - 2 * x + 5
+(x ** 2.) + -2. * x + 5.
+```
+
+Já as imagens exportadas das funções são:
+
+![Função Seno](codigos/imgs/plotStr.svg)
+
+![Função Seno](codigos/imgs/plotSymmath.svg)
 
 ## Trabalhando com curvas em $R^2$
 

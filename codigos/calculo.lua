@@ -1,5 +1,4 @@
 require('symmath').setup()
-local gnuplot = require 'gnuplot'
 
 -- Definição das variáveis simbólicas
 
@@ -63,11 +62,11 @@ print(M)
 
 -- Matriz transposta
 
-print("Matriz transposta")
+print("Matriz transposta:")
 
 Mt = M:T()
 print(M)
 
-print("Calculo do determinante de M^t")
+print("Calculo do determinante da Matriz transposta:")
 
 print(Mt:determinant())
