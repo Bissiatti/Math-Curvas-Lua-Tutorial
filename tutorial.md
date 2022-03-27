@@ -2,7 +2,7 @@
 
 ## Emanuel Bissiatti de Almeida
 
-O tutorial foi testado no Ubuntu e também funciona no Windows com Ubuntu/WSL (mas no Windows é preciso usar uma gambiara para abrir imagens pelo WSL com esse [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242))
+O tutorial foi testado no Ubuntu e também funciona no Windows com Ubuntu/WSL (no Windows 10 é preciso usar uma gambiara para abrir imagens pelo WSL com esse [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242))
 
 ## Requisitos
 
@@ -24,6 +24,8 @@ Para instalar as bibliotecas, após baixar os arquivos para uma pasta qualquer, 
 ```bash
 luarocks make
 ```
+
+Os códigos desse tutorial estarão disponíveis na pasta "./codigos"
 
 ## Hello World em Lua
 
@@ -49,7 +51,7 @@ print "Hello World"
 
 ### Tipos de dados
 
-Em lua temos os seguintes tipos de dados primitivos, qualquer dúvida recomendo a consulta ao [manual oficial da linguagem](https://www.lua.org/manual/5.1/pt/manual.html), disponível em português.
+Em lua temos os seguintes tipos de dados primitivos, qualquer dúvida recomendo a consulta ao [manual oficial da linguagem,](https://www.lua.org/manual/5.1/pt/manual.html) disponível em português.
 
 * 1	
 nil
@@ -245,8 +247,118 @@ Veja a saída
 ```lua
 -- O While segue a mesma lógica de outras linguagens, veja a sintaxe.
 while true do
+    -- Para evitar um loop infinito
     if true then
         break
     end
 end
 ```
+
+Com essas informações iniciais sobre a linguagem lua, já é possível entender tudo o que farei nesse tutorial.
+
+## Symmath Gnuplot para curvas.
+
+Antes de utilizar as bibliotecas para o desenvolvimento de curvas, é importante comentar algumas funções que nos serão úteis. 
+
+Symmath é uma biblioteca desenvolvida originalmente para física computacional, implementando funções e manipulações algébricas em lua. Essa biblioteca é muito versátil: ela é capaz transformar as funções matemáticas em funções computacionais escritas em lua, funções como uma string, uma fórmula escrita em LaTex ou exportar como uma função de plot do GnuPlot.
+
+### Importando as Bibliotecas:
+
+```lua
+-- Importando a biblioteca symmath
+require('symmath')
+-- Importando a bibliotecas mas adicionando as variáveis da biblioteca como globais
+require('symmath').setup()
+
+-- Carregando a biblioteca para usar o gnuplot de terminal com lua
+local gnuplot = require('gnuplot')
+
+-- No caso acima, eu renomeie a biblioteca, como o "as" do python
+```
+### Funções de matemática simbólica
+
+O código seguinte, está disponível na pasta "./codigos/calculo.lua". Esse código são algumas operações úteis para trabalhar com matemática simbólica voltado para curvas.
+
+```lua
+require('symmath').setup()
+local gnuplot = require 'gnuplot'
+
+-- Definição das variáveis simbólicas
+
+local t,x,y,alpha,beta = vars("t","x","y","\\alpha","\\beta")
+
+-- Definindo uma função simbólica
+local f = alpha*sin(x)
+
+print("Função f:")
+print(f)
+
+-- Definindo a derivada
+
+local df = f:diff(x)
+
+print("\nDefinindo a derivada:")
+print(df)
+
+-- Derivando
+
+df = df()
+
+print("Derivada calculada de f")
+print(df)
+
+-- Calculando a integral indefinida da função
+
+local F = f:integrate(x)()
+
+print("\nIntegral indefinifa de f")
+print(F)
+
+-- Calulando a integral definida da função no intervalo 0 a t
+
+local integral = f:integrate(x,0,t)()
+
+print("integral definifa de f de 0 a t:")
+print(integral)
+
+-- Definindo um vetor:
+
+print("\nTrabalhando com vetores:")
+local v = Array(4,3)
+print("v=")
+print(v)
+
+-- Calculo da norma 2 de um vetor:
+
+print("Norma do Vetor v:")
+
+print(v:norm())
+
+-- Criando uma matriz a partir de dois vetores
+local u = Array(x,y)
+
+local M = Matrix(v,u)
+
+print("Matriz:")
+print(M)
+-- Perceba que os vetores são passados como as linhas da matriz e não como colunas
+
+-- Matriz transposta
+
+print("Matriz transposta")
+
+Mt = M:T()
+print(M)
+
+print("Calculo do determinante de M^t")
+
+print(Mt:determinant())
+```
+### Exportando as expressões simbólicas.
+
+É interessante não só construir calcular expressões simbólicas em uma linguagem de programação, mas também, é útil exportar essas funções para a linguagem, para um documento LaTex ou o gráfico da função como uma imagem.
+
+
+
+## Trabalhando com curvas em $R^2$
+
