@@ -475,9 +475,9 @@ local g = x^2-2*x+5
 print(g)
 
 -- Para transformar em uma string para o GnuPlot basta exportar como tal
-g = symmath.export.GnuPlot(g)
+local gplot = symmath.export.GnuPlot(g)
 
-print(g)
+print(gplot)
 
 local plotSymmath = {
     "set term svg", -- Define o tipo de imagem como svg (por padrão é png)
@@ -485,10 +485,48 @@ local plotSymmath = {
     "set xrange [-10:10]", -- Define o intervalo de x
     "set yrange [-25:100]", -- Define o itervalo de y
     output="imgs/plotSymmath.svg", -- Define o arquivo de saida
-    {g} -- Table com a função esper
+    {gplot} -- Table com a função para plot
 }
 
 gnuplot(plotSymmath)
+
+-- Agora vamos desenhar alguns pontos usando gnuplot e a função em symmath
+
+-- Primeiro transformar a função simbólica em função lua
+
+local glua = g:compile({x})
+
+-- Em seguida criar duas tables para armazenar as coordenadas dos pontos
+
+local xpoints, ypoints = {}, {}
+
+-- Agora vamos iterar para gerar pontos xs e seu respectivo valor em g(x)
+for i = -10, 10, 0.5 do
+    table.insert(xpoints,i) -- inserindo o valor de x_i
+    table.insert(ypoints,glua(i)) -- inserindo o valor de y_i
+end
+
+-- Imprimindo do console um ponto de exemplo
+print("x="..xpoints[1],"y="..ypoints[1])
+
+-- Unindo os dados em uma única tabela
+
+local points = {xpoints,ypoints}
+
+-- Imprimindo os pontos com gnuplot
+
+local toPlot = {
+    "set term svg", -- Define o tipo de imagem como svg (por padrão é png)
+    "set grid", -- Imagem com grade
+    "set xrange [-10:10]", -- Define o intervalo de x
+    "set yrange [-25:100]", -- Define o itervalo de y
+    output="imgs/points.svg", -- Define o arquivo de saida
+	data = points, -- Table com os dados 
+	{using = '1:2'}, -- Define o que cada coluna dos dados representa
+}
+gnuplot(toPlot)
+
+
 ```
 
 Da saida do terminal temos:
@@ -497,13 +535,217 @@ Da saida do terminal temos:
  2            
 x  - 2 * x + 5
 (x ** 2.) + -2. * x + 5.
+x=-10.0 y=125.0
 ```
 
 Já as imagens exportadas das funções são:
 
 ![Função Seno](codigos/imgs/plotStr.svg)
 
-![Função Seno](codigos/imgs/plotSymmath.svg)
+![Função quadrática](codigos/imgs/plotSymmath.svg)
 
-## Trabalhando com curvas em $R^2$
+E os pontos da função quadrática.
 
+![Função quadrática,pontos](codigos/imgs/points.svg)
+
+## Trabalhando com curvas paramétricas em $R^2$
+
+Nos exemplos acima exemplifiquei as ferramentas com plots de funções matemáticas. Agora, vamos estudar curvas paramétricas em $R^2$ e como representá-las no ambiente computacional.
+
+<b>Definição 1:</b> Uma curva parametrizada em $R^n$ é uma aplicação $\delta: I \to R^n$ sendo $I \subset R$
+
+Por padrão, o GnuPlot trabalha com a variável t para o plot de uma curva parametrizada. Sendo assim, vamos trabalhar com a variável t para parametrizadas as curvas.
+
+
+Então, no plano cartesiano em $R^2$ vamos trabalhar com a representação da curva como:
+
+$\alpha(t)=\begin{matrix}[x(t) && y(t) \end{matrix}]$
+
+Por exemplo, uma parametrização da parábola $y=x^2-2x+5$ é: $\alpha(t)=\begin{matrix}[t && t^2-2t+5 \end{matrix}]$
+
+Observe no arquivo ".\codigos\parabola.lua" como parametrizar a parabola.
+
+```lua
+require('symmath').setup()
+local gnuplot = require 'gnuplot'
+
+-- Definição da variável
+local t = vars("t")
+
+-- Definição da curva parametrizada.
+-- Vamos tratar a curva como um vetor bidmensional alpha(t) = [x(t),y(t)]
+local alpha = Array(t,t^2-2*t+5)
+
+print(alpha)
+
+-- Transformando para plot
+local alphaPlot = symmath.export.GnuPlot(alpha)
+
+print(alphaPlot)
+
+-- Infelizmente, o export contém "{}" do vetor que o gnuplot não compreende, então vamos remove-los da string.
+
+alphaPlot = string.sub(alphaPlot,2,#alphaPlot-1)
+
+print(alphaPlot)
+
+-- Traço da curva:
+
+gnuplot({
+    "set term svg", -- Define que a imagem exportada será uma 
+    "set grid",
+    "set parametric", -- Define o tipo de função como paramétrica
+    "set trange [-10:10]", -- Define o intervalo de t.
+    output="imgs/parabola.svg", -- Define o output
+    {alphaPlot},
+})
+```
+Saida esperada do terminal
+
+```
+┌              ┐
+│       t      │
+│              │
+│ 2            │
+│t  - 2 * t + 5│
+└              ┘
+{t, (t ** 2.) + -2. * t + 5.}
+t, (t ** 2.) + -2. * t + 5.
+```
+Veja o traço da curva:
+
+![Parabola](codigos/imgs/parabola.svg)
+
+Agora vamos aprender um pouco mais sobre curvas:
+
+<b>Definição 2:</b> Vetor tangente.
+
+Seja $\alpha: I \to R^n$, tal que $\alpha(t)=(\alpha_1(t),\alpha_2(t),...,\alpha_n(t))$ com cada $\alpha(t)_i$ diferenciáveis, o vetor $\alpha(t)'=(\alpha_1'(t),\alpha_2'(t),...,\alpha_n'(t))$ é chamado de vetor tangente (também conhecido como vetor velocidade).
+
+
+<b>Definição 3:</b> Curva regular.
+
+Seja $\alpha(t):= I \to R^n$ uma curva parametrizada e diferenciável, se $\alpha'(t) \ne 0$, $\forall t \in I$ então a curva $\alpha(t)$ é dita regular.
+
+<b>Definição 3:</b> Comprimento de arco.
+
+O comprimento da curva diferenciável $\alpha(t):= I \to R^n$  entre os pontos $a$ e $b$ é matematicamente definido por:
+
+$\int _a ^b ||\alpha'(t)||dt$
+
+<b>Definição 4:</b> Unit Speed.
+
+Seja $\alpha(t): I \to R^n$ uma curva regular diferenciável. Se a norma do vetor velocidade: $||\alpha(t)'||=1$, então a curva possuiu velocidade unitária
+
+<b>Definição 5:</b> Reparametrização.
+
+Uma curva $\beta(t)$ é dita uma reparametrização de $\alpha(t): I \to R^n$ quando dados $I_0$ e quando $\phi(s): I \to I_0$ é um difeomorfismo ($\phi(s)$ é derivável e bijetiva com $\phi(s)^{-1}$ sendo derivável).
+
+<b>Teorema:</b> Reparametrização por comprimento de arco.
+
+Seja $\alpha(t): I \to R^n$ uma curva regular diferenciável e seja $\phi(t)$ a função comprimento de arco $\phi(t)=\int _{t_0} ^t ||\alpha'(t)||dt$. Então, $\alpha(t)$ pode ser reparametrizada como $\beta(s)=\alpha(\phi(t))$ tal que $||\beta(s)'||=1$.
+
+No arquivo "codigos\curvaFuncoes.lua" implementei uma função para calcular o comprimento de arco e para reparametrizar por comprimento de arco. Veja:
+
+```lua
+require('symmath').setup()
+
+-- Função que calcula o comprimento de arco
+-- Recebe curva c regular diferenciável, variável var, intervalo inicial a, intervalo final b
+-- Retorna o comprimento de arco no intervalo definido [a,b] ou a integral indefinida em função de t
+function ComprimentoDeArco(c,var,a,b)
+    -- var, a, b são opcionais, caso o usuário não passe (valor = nil) substituo por:
+    a = a or true
+    b = b or true
+    local t = var or symmath.vars("t")
+
+    -- Calcula a norma do vetor tangente de c
+    local u = c:diff(t)():norm()
+
+    -- Calcula o comprimento de arco através da integral da norma do vetor tangente
+    if a or b then
+        u = u:integrate(t)();
+    else
+        u = u:integrate(t,a,b)()
+    end
+    return u
+end
+
+-- Função de reparametrização de uma curva c
+-- Recebe curva c regular diferenciável, e a variável var
+-- Retorna a nova curva c só que reparametrizada por comprimento de arco
+function Reparametrizacao(c,var)
+    -- var, é opcional, caso o usuário não passe (valor = nil) substitue por t:
+    local t = var or symmath.vars("t")
+    -- Calcula o comprimento de arco e faz o replace de t, t = comprimentoDeArco(t)
+    return symmath.replace(c, t, ComprimentoDeArco(c))
+end
+```
+Agora, vamos estudar a taxa de variação da tangente de uma curva através da curvatura.
+
+<b>Definição 5:</b> Curvatura sem sinal para curvas unit speed.
+
+Seja $\alpha(t): I \to R^n$ uma curva regular duas vezes diferenciável em unit-speed. Sua curvatura $k(t)$ é definida como:
+
+$k(t)=|\alpha''(t)|$
+
+<b>Teorema:</b> Curvatura com sinal para qualquer curva regular em $R^2$.
+
+Seja $\alpha(t): I \to R^2$ uma curva regular. Se $\alpha(t)$ é duas vezes diferenciável, então sua curvatura é definida por: 
+
+$k(t)=\dfrac{det([\alpha'(t),\alpha''(t)])}{||\alpha'(t)||^3}$
+
+Veja a função curvatura no caso geral em $R^2$ usando symmath.
+
+```lua
+-- Função curvatura, calcula a curvatura (em R^2) de uma curva c em função de t.
+-- Recebe curva c regular duas vezes diferenciável, e a variável var
+-- Retorna sua curvatura com sinal.
+function CurvaturaR2(c,var)
+    -- Verifica se a dimensão da curva é 2.
+    if c:dim()[1] ~= 2 then
+        error("The dimension of curve c is not 2")
+    end
+    -- var, é opcional, caso o usuario não passe (valor = nil) substitue por t:
+    local var = var or vars("t")
+    -- dif1 é a primeira derivada da curva, vetor velocidade
+    local dif1 = c:diff(var)()
+    -- dif2 é a segunda derivada da curva, vetor aceleração
+    local dif2 = dif1:diff(var)()
+    -- u é a norma do vetor velocidade
+    local u = dif1:norm()
+
+    -- retorna a função curvatura de c. 
+    return ((dif1[1]*dif2[2])-(dif1[2]*dif2[1]))/(u)^3
+end
+```
+Em $R^2$ sabemos que qualquer curva pode ser definida a partir de sua curvatura e de um ponto inicial, como afirma o Teorema Fundamental (local) das Curvas Planas.
+
+<b>Definição:</b> Movimento Rígido:
+
+Seja $F:R^n\to R^n$ uma aplicação. Se $F$ preserva distância, isto é, $||x−y||=||F(x)−F(y)||$, $\forall x,y \in R^n$ então $F$ é um movimento rígido.
+
+<b>Teorema:</b> Teorema Fundamental (Local) das Curvas Planas.
+
+Seja $k(t)$ a curvatura de uma curva plana $\alpha(t)$. Então $\alpha(t)$ pode ser definida por $k(t)$ a um movimento rígido.
+
+Se $\theta(s)=\int k(t)dt$. 
+
+Logo, $\alpha(t)=\int[cos(\theta(t)),sin(\theta(s))]dt$
+
+Veja como encontrar a curva dada a curvatura em $R^2$ com lua:
+
+```lua
+function CurvaDeCurvaturaR2(curvatura,var)
+    -- var, é opcional, caso o usuario não passe (valor = nil) substitue por t:
+    local var = var or vars('t')
+
+    -- Encontra a função Theta
+    local theta = symmath.Integral(curvatura,var)()
+    -- Encontra o vetor tangente a um movimento rígdo
+    local cdiff = Array(cos(theta),sin(theta))
+
+    -- Retorna a curva
+    return cdiff:integrate(var)()
+end
+```
