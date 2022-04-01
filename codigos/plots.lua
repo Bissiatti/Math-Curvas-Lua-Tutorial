@@ -22,9 +22,9 @@ local g = x^2-2*x+5
 print(g)
 
 -- Para transformar em uma string para o GnuPlot basta exportar como tal
-g = symmath.export.GnuPlot(g)
+local gplot = symmath.export.GnuPlot(g)
 
-print(g)
+print(gplot)
 
 local plotSymmath = {
     "set term svg", -- Define o tipo de imagem como svg (por padrão é png)
@@ -32,7 +32,43 @@ local plotSymmath = {
     "set xrange [-10:10]", -- Define o intervalo de x
     "set yrange [-25:100]", -- Define o itervalo de y
     output="imgs/plotSymmath.svg", -- Define o arquivo de saida
-    {g} -- Table com a função esper
+    {gplot} -- Table com a função para plot
 }
 
 gnuplot(plotSymmath)
+
+-- Agora vamos desenhar alguns pontos usando gnuplot e a função em symmath
+
+-- Primeiro transformar a função simbólica em função lua
+
+local glua = g:compile({x})
+
+-- Em seguida criar duas tables para armazenar as coordenadas dos pontos
+
+local xpoints, ypoints = {}, {}
+
+-- Agora vamos iterar para gerar pontos xs e seu respectivo valor em g(x)
+for i = -10, 10, 0.5 do
+    table.insert(xpoints,i) -- inserindo o valor de x_i
+    table.insert(ypoints,glua(i)) -- inserindo o valor de y_i
+end
+
+-- Imprimindo do console um ponto de exemplo
+print("x="..xpoints[1],"y="..ypoints[1])
+
+-- Unindo os dados em uma única tabela
+
+local points = {xpoints,ypoints}
+
+-- Imprimindo os pontos com gnuplot
+
+local toPlot = {
+    "set term svg", -- Define o tipo de imagem como svg (por padrão é png)
+    "set grid", -- Imagem com grade
+    "set xrange [-10:10]", -- Define o intervalo de x
+    "set yrange [-25:100]", -- Define o itervalo de y
+    output="imgs/points.svg", -- Define o arquivo de saida
+	data = points, -- Table com os dados 
+	{using = '1:2'}, -- Define o que cada coluna dos dados representa
+}
+gnuplot(toPlot)

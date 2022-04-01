@@ -1,6 +1,6 @@
 require('symmath').setup()
 
-local x,y,t = vars("x","y","t")
+local x,y,t = vars("x","t")
 
 -- Definindo uma função qualquer
 local f = x*sin(x)+x

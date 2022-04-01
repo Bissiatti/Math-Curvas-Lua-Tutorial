@@ -675,10 +675,16 @@ end
 -- Recebe curva c regular diferenciável, e a variável var
 -- Retorna a nova curva c só que reparametrizada por comprimento de arco
 function Reparametrizacao(c,var)
-    -- var, é opcional, caso o usuário não passe (valor = nil) substitue por t:
-    local t = var or symmath.vars("t")
-    -- Calcula o comprimento de arco e faz o replace de t, t = comprimentoDeArco(t)
-    return symmath.replace(c, t, ComprimentoDeArco(c))
+    -- var, é opcional, caso o usuario não passe (valor = nil) substitue por t:
+    local t = var or vars("t")
+    local y = vars('y')
+    -- Calcula o comprimento de arco e faz o replace de t em função de y
+    local eqn = symmath.op.eq(ComprimentoDeArco(c,var), y)
+    -- Encontra a inversa de y
+    local sol =  symmath.solve(eqn, t)[2]
+    -- Substituiu t pelo valor parametrizado por comprimento de arco.
+    sol = symmath.replace(sol,y,t)
+    return symmath.replace(c, t, sol)
 end
 ```
 Agora, vamos estudar a taxa de variação da tangente de uma curva através da curvatura.
@@ -736,6 +742,9 @@ Logo, $\alpha(t)=\int[cos(\theta(t)),sin(\theta(s))]dt$
 Veja como encontrar a curva dada a curvatura em $R^2$ com lua:
 
 ```lua
+-- Função para obter uma curva a um movimento rígido a partir da curvatura.
+-- Receve a curvatura e a variável var.
+-- Retorna a curva
 function CurvaDeCurvaturaR2(curvatura,var)
     -- var, é opcional, caso o usuario não passe (valor = nil) substitue por t:
     local var = var or vars('t')
@@ -749,3 +758,252 @@ function CurvaDeCurvaturaR2(curvatura,var)
     return cdiff:integrate(var)()
 end
 ```
+
+### Exemplos em $R^2$
+
+Após definir as funções, veja a aplicação dessas funções em algumas curvas no plano.
+
+* Circulo não unit-speed:
+
+    $c(t)=\left[ \begin{matrix} {{5}} {{\cos\left(  t\right)}} && {{5}} {{\sin\left(  t\right)}}\end{matrix} \right]$
+    
+    ![circulo](codigos/imgs/curva1.svg)
+
+    Com comprimento de arco de: ${{5}} {{t}}$
+
+    Vamos reparametrizar por comprimento de arco com a função 
+
+    $c2(t)=\left[ \begin{matrix} {{5}} {{\cos\left( {{\frac{1}{5}} {t}}\right)}} && {{5}} {{\sin\left( {{\frac{1}{5}} {t}}\right)}}\end{matrix} \right]$
+    
+    ![circulo](codigos/imgs/curva2.svg) 
+
+    ```lua
+    local gnuplot = require 'gnuplot'
+    require('symmath').setup()
+
+    require("curvaFuncoes")
+
+    local t = vars("t")
+
+    local e = Array(5*cos(t),5*sin(t))
+
+    -- Exportando para latex
+    -- print(symmath.export.LaTeX(e))
+    -- print(symmath.export.LaTeX(ComprimentoDeArco(e)))
+
+    -- e2 é a curva reparametrizada
+    local e2 = Reparametrizacao(e)
+
+    -- print(symmath.export.LaTeX(e2))
+
+    local ePlot = Array2GnuPlotR2(e)
+    local ePlot2 = Array2GnuPlotR2(e2)
+
+    -- Criando vetores alpha'(t) e alpha''(t) 
+    local x0,y0,x1,y1={},{},{},{}
+    local ed = e:diff(t)()
+    local edd = ed:diff(t)()
+    local eFunc = e:compile({t})
+    ed = ed:compile({t})
+    edd = edd:compile({t})
+
+
+    for i = 0, 6.30, 0.5 do
+        local p0 = eFunc(i)
+        table.insert(x0,p0[1])
+        table.insert(y0,p0[2])
+        local p1 = ed(i)
+        table.insert(x1,p1[1])
+        table.insert(y1,p1[2])
+        
+        table.insert(x0,p0[1])
+        table.insert(y0,p0[2])
+        local p2 = edd(i)
+        table.insert(x1,p2[1])
+        table.insert(y1,p2[2])
+
+    end
+
+    local toPlot = {
+        --persist = true,
+        "set term svg",
+        "set grid",
+        "set parametric",
+        "set trange [-pi:pi]",
+        "set xrange [-8:8]",
+        "set yrange [-8:8]",
+        output="imgs/curva1.svg",
+        {ePlot},
+        style = 'data vector',
+        data = {
+            x0,
+            y0,
+            x1,
+            y1,
+        },
+        {using = '1:2:3:4'},
+    }
+
+    gnuplot(toPlot)
+
+    -- Criando vetores alpha'(t) e alpha''(t) 
+    x0,y0,x1,y1={},{},{},{}
+
+    local ed2 = e2:diff(t)()
+    local edd2 = ed2:diff(t)()
+    local eFunc2 = e2:compile({t})
+    ed2 =  ed2:compile({t})
+    edd2 = edd2:compile({t})
+
+
+    for i = 0, 2*math.pi*5, 2 do
+        local p0 = eFunc2(i)
+        table.insert(x0,p0[1])
+        table.insert(y0,p0[2])
+        local p1 = ed2(i)
+        table.insert(x1,p1[1])
+        table.insert(y1,p1[2])
+        
+        table.insert(x0,p0[1])
+        table.insert(y0,p0[2])
+        local p2 = edd2(i)
+        table.insert(x1,p2[1])
+        table.insert(y1,p2[2])
+    end
+
+
+    local toPlot = {
+        --persist = true,
+        "set term svg",
+        "set grid",
+        "set parametric",
+        "set trange [-pi*5:pi*5]",
+        "set xrange [-8:8]",
+        "set yrange [-8:8]",
+        output="imgs/curva2.svg",
+        {ePlot2},
+        style = 'data vector',
+        data = {
+            x0,
+            y0,
+            x1,
+            y1,
+        },
+        {using = '1:2:3:4'},
+    }
+
+    gnuplot(toPlot)
+    ```
+
+### Trabalhando com curvas paramétricas em $R^3$
+
+A maior parte do que foi definido sobre as curvas no $R^2$ é válido para as curvas em $R^3$, mas se tratando de uma dimensão a mais, temos que a curvatura não é suficiente para descrever a curva no espaço, surgindo assim uma nova característica, a torção.
+
+Se $\alpha(t): I \to R^3$ é uma curva duas vezes diferenciável, regular e unit speed sua curvatura corresponde ao $||\alpha(t)''||$, caso não seja regular, sua curvatura será:
+
+<b>Teorema:</b> Curvatura sem sinal para qualquer curva regular em $R^3$:
+
+Se $\alpha(t): I \to R^3$ é uma curva duas vezes diferenciável e regular, sua curvatura pode ser calculada como:
+
+$k(t)=\dfrac{||\alpha'(t)\times \alpha''(t)||}{||\alpha(t)'||^3}$
+
+A torção ($\tau$) é uma propriedade que mede o quanto uma curva se projeta para fora do plano de curvatura em $R^3$, uma curva pode aproximar-se ou afastar-se do vetor normal.
+
+<b>Definição:</b> Torção para uma curva regular em $R^3$:
+
+Se $\alpha(t): I \to R^3$ é uma curva três vezes diferenciável e regular, então sua torção é definida como:
+
+$\tau(t)=\dfrac{(\alpha'(t)\times \alpha''(t)) \cdot \alpha'''(t)}{||\alpha'(t)\times \alpha''(t)||^2}$
+
+<b>Definição:</b> Triedro de Frenet para uma curva 2-regular em $R^3$:
+
+Se $\alpha(t): I \to R^3$ é uma curva três vezes diferenciável, 2-regular e parametrizada por comprimento de arco, então o Triedro de Frenet, uma base ortogonal no ponto $P \in \alpha(t)$ é definida como:
+
+$T(t) = \alpha(t)'$
+
+$N(t) = \dfrac{\alpha''(t)}{||\alpha''(t)||}$
+
+$B(t) = T(t)\times N(t)$
+
+Portanto o Triedro de Frenet em $t$ é = $[T(t),N(t),B(t)]$
+
+### Exemplos em $R^2$:
+
+Observe a espiral $\alpha(t)=\left[ \begin{matrix} \sin\left(  u\right) &&& \cos\left(  u\right) && u\end{matrix} \right]$
+
+Possuiu curvatura: 
+
+$\dfrac{\sqrt{2}}{{\sqrt{2}}^{3}} = \dfrac{1}{\sqrt(2)}$
+
+E torção: 
+
+$\dfrac{{{-{\cos\left(  u\right)}}{{\cos\left(  u\right)}}} + { {-{\sin\left(  u\right)}} {{\sin\left(  u\right)}}} + {0}}{{\sqrt{2}}^{2}}=\dfrac{-1}{2}$
+
+Veja a curva e o Triedro de Frenet em um ponto.
+
+![circulo](codigos/imgs/3d.svg) 
+
+A seguir o código que calculou essas informações, (disponível em "codigos/exemplosR3.lua")
+
+```lua
+local gnuplot = require 'gnuplot'
+require('symmath').setup()
+require("curvaFuncoes")
+
+local u = var("u")
+local f = Array(sin(u),cos(u),u)
+
+local triedro = TriedroFrenet(f,u)
+
+-- Obter informações da curva no terminal
+print(f)
+print(CurvaturaR3(f,u))
+print(TorcaoR3(f,u))
+print(triedro)
+-- Obter saida em LaTex
+-- print(symmath.export.LaTeX(f))
+-- print(symmath.export.LaTeX(CurvaturaR3(f,u)))
+-- print(symmath.export.LaTeX(TorcaoR3(f,u)))
+
+-- criar o triedo em um ponto
+
+local t0 = 2
+local funcF,code1 = f:compile({u})
+local funcTriedo,code2 = triedro:compile({u})
+
+-- print(code1)
+-- print(code2)
+
+local p0Triedo = funcTriedo(t0)
+local p0 = funcF(t0)
+x0 = {p0[1],p0[1],p0[1]}
+y0 = {p0[2],p0[2],p0[2]}
+z0 = {p0[3],p0[3],p0[3]}
+
+x1 = {p0Triedo[1][1],p0Triedo[1][2],p0Triedo[1][3]}
+y1 = {p0Triedo[2][1],p0Triedo[2][2],p0Triedo[1][3]}
+z1 = {p0Triedo[3][1],p0Triedo[3][2],p0Triedo[3][3]}
+
+-- Exportar traço da curva como svg
+local exp = Array2GnuPlotR3(f)
+local toPlot = {
+	--persist = true,
+    "set term svg",
+    "set grid",
+    "set parametric",
+    output="imgs/3d.svg",
+    {splot=true,exp},
+    style = 'data vector',
+	data = {
+		x0,
+		y0,
+        z0,
+		x1,
+		y1,
+        z1,
+	},
+	{splot=true,using = '1:2:3:4:5:6'},
+}
+gnuplot(toPlot)
+```
+

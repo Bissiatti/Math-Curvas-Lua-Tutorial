@@ -1,7 +1,8 @@
 require('symmath').setup()
 
--- Função utilitária para 
+-- Função utilitária para exportar a curva para o gnuplot  
 function Array2GnuPlotR2(arr,var)
+    local t = vars("t")
     if var then
         arr = symmath.replace(var, t, arr)
     end
@@ -10,11 +11,22 @@ function Array2GnuPlotR2(arr,var)
 end
 
 function Array2GnuPlotR3(arr,var)
+    local u = vars("u")
     if var then
         arr = symmath.replace(var, u, arr)
     end
     arr = symmath.export.GnuPlot(arr)
     return string.sub(arr,2,#arr-1)
+end
+
+function ProdutoEscalar(a,b)
+    local result = 0;
+    for index, value in ipairs(a) do
+        print(value)
+        result = result + (a[index]*b[index])
+    end
+
+    return result
 end
 
 -- Função que calcula o comprimento de arco
@@ -44,8 +56,14 @@ end
 function Reparametrizacao(c,var)
     -- var, é opcional, caso o usuario não passe (valor = nil) substitue por t:
     local t = var or vars("t")
-    -- Calcula o comprimento de arco e faz o replace de t, t = comprimentoDeArco(t)
-    return symmath.replace(c, t, ComprimentoDeArco(c))
+    local y = vars('y')
+    -- Calcula o comprimento de arco e faz o replace de t em função de y
+    local eqn = symmath.op.eq(ComprimentoDeArco(c,var), y)
+    -- Encontra a inversa de y
+    local sol =  symmath.solve(eqn, t)[2]
+    -- Substituiu t pelo valor parametrizado por comprimento de arco.
+    sol = symmath.replace(sol,y,t)
+    return symmath.replace(c, t, sol)
 end
 
 -- Função curvatura, calcula a curvatura (em R^2) de uma curva c em função de t.
@@ -70,8 +88,8 @@ function CurvaturaR2(c,var)
     return ((dif1[1]*dif2[2])-(dif1[2]*dif2[1]))/(u)^3
 end
 
--- Função para obter a curva alpha a partir da curvatura e um ponto inicial 
--- Receve a curvatura, a variável var.
+-- Função para obter uma curva a um movimento rígido a partir da curvatura.
+-- Receve a curvatura e a variável var.
 -- Retorna a curva
 function CurvaDeCurvaturaR2(curvatura,var)
     -- var, é opcional, caso o usuario não passe (valor = nil) substitue por t:
@@ -84,11 +102,58 @@ function CurvaDeCurvaturaR2(curvatura,var)
 
     -- Retorna a curva
     return cdiff:integrate(var)()
+end
+-- Função curvatura, calcula a curvatura (em R^3) de uma curva c em função de t.
+-- Recebe curva c regular duas vezes diferenciável, e a variável var
+-- Retorna sua curvatura
+function CurvaturaR3(c,var)
+    -- var, é opcional, caso o usuario não passe (valor = nil) substitue por u:
+    local var = var or vars("u")
+    -- dif1 é a primeira derivada da curva.
+    local dif1 = c:diff(var)()
+    local n = dif1:norm()
+    -- dif2 é a segunda derivada da curva.
+    local dif2 = dif1:diff(var)()
 
+    local k = Array.cross(dif1,dif2)
+
+    k = k:norm()
+
+    return k/n^3
+end
+-- Função curvatura, calcula a torção (em R^3) de uma curva c em função de t.
+-- Recebe curva c regular três vezes diferenciável, e a variável var
+-- Retorna sua curvatura
+function TorcaoR3(c,var)
+    -- var, é opcional, caso o usuario não passe (valor = nil) substitue por u:
+    local var = var or vars("u")
+    -- dif1 é a primeira derivada da curva.
+    local dif1 = c:diff(var)()
+    -- dif2 é a segunda derivada da curva.
+    local dif2 = dif1:diff(var)()
+     -- dif3 é a terceira derivada da curva.
+    local dif3 = dif2:diff(var)()
+
+    local v = Array.cross(dif1,dif2)
+
+    return ProdutoEscalar(v,dif3)/(v:norm()^2)
 end
 
-local t = vars("t")
+-- Função para calcular o Triedro de Frenet (em R^3) de uma curva c em função de t.
+-- Recebe curva c regular três vezes diferenciável, e a variável var
+-- Retorna um Array com os três vetores do Triedro de Frenet
+function TriedroFrenet(c,var)
+    -- var, é opcional, caso o usuario não passe (valor = nil) substitue por u:
+    local var = var or vars("u")
+    -- T é a primeira derivada da curva.
+    c = Reparametrizacao(c,var)
+    print(c)
+    local T = c:diff(var)()
+    -- N é a segunda derivada da curva.
+    local N = T:diff(var)()
+    N = N:unit()
+    -- B é o vetor perpendicular a N e T.
+    local B = Array.cross(N,T)
 
-print(CurvaDeCurvaturaR2(0))
-
-print(CurvaDeCurvaturaR2(1))
+    return Array(T,N,B)
+end
