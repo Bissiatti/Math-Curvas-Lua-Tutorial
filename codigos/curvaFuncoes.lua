@@ -22,7 +22,6 @@ end
 function ProdutoEscalar(a,b)
     local result = 0;
     for index, value in ipairs(a) do
-        print(value)
         result = result + (a[index]*b[index])
     end
 
@@ -147,7 +146,6 @@ function TriedroFrenet(c,var)
     local var = var or vars("u")
     -- T é a primeira derivada da curva.
     c = Reparametrizacao(c,var)
-    print(c)
     local T = c:diff(var)()
     -- N é a segunda derivada da curva.
     local N = T:diff(var)()

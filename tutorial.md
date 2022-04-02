@@ -25,6 +25,8 @@ Para instalar as bibliotecas, após baixar os arquivos para uma pasta qualquer, 
 luarocks make
 ```
 
+Se você quiser brincar com essas ferramentas de matemática simbólicas  acesse o [site do criador](http://christopheremoore.net/symbolic-lua/) para usá-las pelo navegador.
+
 Os códigos desse tutorial estarão disponíveis na pasta "./codigos"
 
 ## Hello World em Lua
@@ -777,6 +779,7 @@ Após definir as funções, veja a aplicação dessas funções em algumas curva
     
     ![circulo](codigos/imgs/curva2.svg) 
 
+
     ```lua
     local gnuplot = require 'gnuplot'
     require('symmath').setup()
@@ -895,6 +898,81 @@ Após definir as funções, veja a aplicação dessas funções em algumas curva
     gnuplot(toPlot)
     ```
 
+    * Lamniscata:
+
+    $\alpha(t)=\left[ \begin{matrix} \cos\left(  t\right) &&{{\sin\left(  t\right)}} {{\cos\left(  t\right)}}\end{matrix} \right]$
+
+    Com comprimento de arco:
+    $\int{{\sqrt{{-{1}} + {{\cos\left(  t\right)}^{2}} + {{\cos\left(  t\right)}^{4}}{-{{{3}} {{{\cos\left(  t\right)}^{2}}} {{{\sin\left(  t\right)}^{2}}}}} + {{{3}} {{{\sin\left(  t\right)}^{2}}}}}}}d t$
+
+    Observe que o comprimento de arco possuiu ma integral difícil de calcular sem métodos numéricos, nessa abordagem só trabalhei com métodos simbólicos.
+
+    Já a curvatura da lamniscata:
+
+    $k(t)= \frac{{ {-{\sin\left(  t\right)}} \cdot  {-{{{4}} {{\cos\left(  t\right)}} {{\sin\left(  t\right)}}}}}{-{{{\left({{\cos\left(  t\right)} + {\sin\left(  t\right)}}\right)}} {{\left({{\cos\left(  t\right)}{-{\sin\left(  t\right)}}}\right)}} \cdot  {-{\cos\left(  t\right)}}}}}{{\sqrt{{-{1}} + {{\cos\left(  t\right)}^{2}} + {{\cos\left(  t\right)}^{4}}{-{{{3}} {{{\cos\left(  t\right)}^{2}}} {{{\sin\left(  t\right)}^{2}}}}} + {{{3}} {{{\sin\left(  t\right)}^{2}}}}}}^{3}}$ 
+
+    ![curva](codigos/imgs/curva-2.svg) 
+
+Quando definimos a curvatura, queríamos que ela possuiu algumas propriedades, como a curvatura de uma reta é nula e a curvatura de uma circunferência é constante diferente de 0. 
+
+* Encontrar uma reta a partir de $k(t)=0$
+
+    Utilizando a função 
+    `
+     CurvaDeCurvaturaR2(curvatura)
+    `
+    obtive a curva: $\alpha(t)=\left[ \begin{matrix} t && 0\end{matrix} \right]$, veja:
+
+![curva](codigos/imgs/curvatura-1.svg) 
+
+Código para obter essa curva está disponível em "codigos\exemplosTFCP.lua", veja:
+
+```lua
+local gnuplot = require 'gnuplot'
+require('symmath').setup()
+require("curvaFuncoes")
+
+local curvatura = 0
+local curva = CurvaDeCurvaturaR2(curvatura)
+
+print(curva)
+print(symmath.export.LaTeX(curva))
+
+curva = Array2GnuPlotR2(curva)
+
+-- Plot
+
+local toPlot = {
+	--persist = true,
+    "set term svg",
+    "set grid",
+    "set parametric",
+    "set trange [-1:1]",
+    output="imgs/curvatura-1.svg",
+    {curva},
+}
+
+gnuplot(toPlot)
+```
+
+
+
+* Encontrar a curva após a curvatura:
+
+    Seja $\alpha(t)=\left[ \begin{matrix}{{2}}  {{\cos\left(  t\right)}} && {{2}} {{\sin\left(  t\right)}}\end{matrix} \right]$
+
+    Sua curvatura é: $\frac{-1}{4}$
+
+    Já a curva dada pela curvatura é:
+
+    $\beta(t)=\left[ \begin{matrix} {{2}} {{\sin\left( {{\frac{1}{2}} {t}}\right)}} && -{{{2}} {{\cos\left( {{\frac{1}{2}} {t}}\right)}}}\end{matrix} \right]$
+
+    Repare que é equivalente a primeira curva exceto por um movimento rígido. Observe os traços das curvas:
+
+    ![curva](codigos/imgs/curvatura-2.svg) 
+    ![curva](codigos/imgs/curvatura-3.svg) 
+ 
+
 ### Trabalhando com curvas paramétricas em $R^3$
 
 A maior parte do que foi definido sobre as curvas no $R^2$ é válido para as curvas em $R^3$, mas se tratando de uma dimensão a mais, temos que a curvatura não é suficiente para descrever a curva no espaço, surgindo assim uma nova característica, a torção.
@@ -929,15 +1007,15 @@ Portanto o Triedro de Frenet em $t$ é = $[T(t),N(t),B(t)]$
 
 ### Exemplos em $R^2$:
 
-Observe a espiral $\alpha(t)=\left[ \begin{matrix} \sin\left(  u\right) &&& \cos\left(  u\right) && u\end{matrix} \right]$
+Observe a espiral $\alpha(u)=\left[ \begin{matrix} \sin\left(  u\right) &&& \cos\left(  u\right) && u\end{matrix} \right]$
 
 Possuiu curvatura: 
 
-$\dfrac{\sqrt{2}}{{\sqrt{2}}^{3}} = \dfrac{1}{\sqrt(2)}$
+$k(u)=\dfrac{\sqrt{2}}{{\sqrt{2}}^{3}} = \dfrac{1}{\sqrt(2)}$
 
 E torção: 
 
-$\dfrac{{{-{\cos\left(  u\right)}}{{\cos\left(  u\right)}}} + { {-{\sin\left(  u\right)}} {{\sin\left(  u\right)}}} + {0}}{{\sqrt{2}}^{2}}=\dfrac{-1}{2}$
+$\tau(u)=\dfrac{{{-{\cos\left(  u\right)}}{{\cos\left(  u\right)}}} + { {-{\sin\left(  u\right)}} {{\sin\left(  u\right)}}} + {0}}{{\sqrt{2}}^{2}}=\dfrac{-1}{2}$
 
 Veja a curva e o Triedro de Frenet em um ponto.
 
@@ -1007,3 +1085,20 @@ local toPlot = {
 gnuplot(toPlot)
 ```
 
+* Circulo no plano $z=1$:
+
+    $\alpha(u)=\left[ \begin{matrix} \cos\left(  u\right) && \sin\left(  u\right) && 1\end{matrix} \right]$
+
+    Curvatura constante igual a:
+
+    $k(u)=1$
+
+    E torção igual a:
+
+    $\tau(u)=0$
+
+    Veja o gráfico com o triedro:
+
+    ![circulo](codigos/imgs/3d-2.svg) 
+
+    

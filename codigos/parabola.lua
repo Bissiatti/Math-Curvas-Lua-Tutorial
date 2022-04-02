@@ -31,3 +31,4 @@ gnuplot({
     output="imgs/parabola.svg", -- Define o output
     {alphaPlot},
 })
+
