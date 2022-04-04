@@ -1005,6 +1005,64 @@ $B(t) = T(t)\times N(t)$
 
 Portanto o Triedro de Frenet em $t$ é = $[T(t),N(t),B(t)]$
 
+A seguir o código de implementação dessas funções exclusivas do $R^3$.
+
+```lua
+-- Função curvatura, calcula a curvatura (em R^3) de uma curva c em função de t.
+-- Recebe curva c regular duas vezes diferenciável, e a variável var
+-- Retorna sua curvatura
+function CurvaturaR3(c,var)
+    -- var, é opcional, caso o usuario não passe (valor = nil) substitue por u:
+    local var = var or vars("u")
+    -- dif1 é a primeira derivada da curva.
+    local dif1 = c:diff(var)()
+    local n = dif1:norm()
+    -- dif2 é a segunda derivada da curva.
+    local dif2 = dif1:diff(var)()
+
+    local k = Array.cross(dif1,dif2)
+
+    k = k:norm()
+
+    return k/n^3
+end
+-- Função torção, calcula a torção (em R^3) de uma curva c em função de t.
+-- Recebe curva c regular três vezes diferenciável, e a variável var
+-- Retorna sua torção
+function TorcaoR3(c,var)
+    -- var, é opcional, caso o usuario não passe (valor = nil) substitue por u:
+    local var = var or vars("u")
+    -- dif1 é a primeira derivada da curva.
+    local dif1 = c:diff(var)()
+    -- dif2 é a segunda derivada da curva.
+    local dif2 = dif1:diff(var)()
+     -- dif3 é a terceira derivada da curva.
+    local dif3 = dif2:diff(var)()
+
+    local v = Array.cross(dif1,dif2)
+
+    return ProdutoEscalar(v,dif3)/(v:norm()^2)
+end
+
+-- Função para calcular o Triedro de Frenet (em R^3) de uma curva c em função de t.
+-- Recebe curva c regular três vezes diferenciável, e a variável var
+-- Retorna um Array com os três vetores do Triedro de Frenet
+function TriedroFrenet(c,var)
+    -- var, é opcional, caso o usuario não passe (valor = nil) substitue por u:
+    local var = var or vars("u")
+    -- T é a primeira derivada da curva.
+    c = Reparametrizacao(c,var)
+    local T = c:diff(var)()
+    -- N é a segunda derivada da curva.
+    local N = T:diff(var)()
+    N = N:unit()
+    -- B é o vetor perpendicular a N e T.
+    local B = Array.cross(N,T)
+
+    return Array(T,N,B)
+end
+```
+
 ### Exemplos em $R^2$:
 
 Observe a espiral $\alpha(u)=\left[ \begin{matrix} \sin\left(  u\right) &&& \cos\left(  u\right) && u\end{matrix} \right]$
@@ -1016,6 +1074,10 @@ $k(u)=\dfrac{\sqrt{2}}{{\sqrt{2}}^{3}} = \dfrac{1}{\sqrt(2)}$
 E torção: 
 
 $\tau(u)=\dfrac{{{-{\cos\left(  u\right)}}{{\cos\left(  u\right)}}} + { {-{\sin\left(  u\right)}} {{\sin\left(  u\right)}}} + {0}}{{\sqrt{2}}^{2}}=\dfrac{-1}{2}$
+
+Já o triedro
+
+$\left[ \begin{matrix}  \frac{\cos\left( {\frac{u}{\sqrt{2}}}\right)}{\sqrt{2}} &  -{\frac{\sin\left( {\frac{u}{\sqrt{2}}}\right)}{\sqrt{2}}} &  \frac{1}{\sqrt{2}} \\  -{\sin\left( {\frac{u}{\sqrt{2}}}\right)} &  -{\cos\left( {\frac{u}{\sqrt{2}}}\right)} &  0 \\  -{\frac{\cos\left( {\frac{u}{\sqrt{2}}}\right)}{\sqrt{2}}} &  \frac{\sin\left( {\frac{u}{\sqrt{2}}}\right)}{\sqrt{2}} &  \frac{1}{\sqrt{2}}\end{matrix} \right]$
 
 Veja a curva e o Triedro de Frenet em um ponto.
 
@@ -1093,12 +1155,49 @@ gnuplot(toPlot)
 
     $k(u)=1$
 
-    E torção igual a:
+    Com torção igual a:
 
     $\tau(u)=0$
+
+    E triedro igual a: 
+
+    $\left[ \begin{matrix}  -{\sin\left(  u\right)} &  \cos\left(  u\right) &  0 \\  -{\cos\left(  u\right)} &  -{\sin\left(  u\right)} &  0 \\  0 &  0 &  -{1}\end{matrix} \right]$
 
     Veja o gráfico com o triedro:
 
     ![circulo](codigos/imgs/3d-2.svg) 
 
+* Exemplo curva sem nome:
+
+    Seja $\alpha(u)=\left[ \begin{matrix} -{{u}^{2}} && u && \cos\left(  u\right)\end{matrix} \right]$
+
+    Possuiu curvatura
     
+    $k(u)=\dfrac{\sqrt{{8}{-{{{3}} {{{\cos\left(  u\right)}^{2}}}}} + {{{4}} {{{u}^{2}}} {{{\cos\left(  u\right)}^{2}}}}{-{{{8}} {{u}} {{\sin\left(  u\right)}} {{\cos\left(  u\right)}}}}}}{{\sqrt{{2}{-{{\cos\left(  u\right)}^{2}}} + {{{4}} {{{u}^{2}}}}}}^{3}}$
+
+    E torção:
+
+    $\tau(u)=\dfrac{{{{2}} {{\sin\left(  u\right)}}}}{{\sqrt{{8}{-{{{3}} {{{\cos\left(  u\right)}^{2}}}}} + {{{4}} {{{u}^{2}}} {{{\cos\left(  u\right)}^{2}}}}{-{{{8}} {{u}} {{\sin\left(  u\right)}} {{\cos\left(  u\right)}}}}}}^{2}}$
+
+    Veja o gráfico curioso:
+
+    ![curva](codigos/imgs/3d-3.svg) 
+
+    * Mais um exemplo:
+
+    Seja a curva:
+
+    $\alpha(u)=\left[ \begin{matrix} {{\frac{1}{u}}} {{\cos\left(  u\right)}} && {{\frac{1}{u}}} {{\sin\left(  u\right)}} && u\end{matrix} \right]$
+
+    Com curvatura igual a:
+
+    $k(u)=\dfrac{\dfrac{\sqrt{{4} + {{u}^{2}} + {{u}^{4}}}}{{u}^{3}}}{{\left({\dfrac{\sqrt{{1} + {{u}^{2}} + {{u}^{4}}}}{{u}^{2}}}\right)}^{3}}$
+
+    E torção:
+
+    $\dfrac{{{{\frac{{-{{{2}} {{\sin\left(  u\right)}}}} + {{{{u}^{2}}} {{\sin\left(  u\right)}}} + {{{2}} {{u}} {{\cos\left(  u\right)}}}}{{u}^{3}}}} {{\frac{{{{{u}^{3}}} {{\sin\left(  u\right)}}}{-{{{6}} {{\cos\left(  u\right)}}}} + {{{3}} {{{u}^{2}}} {{\cos\left(  u\right)}}}{-{{{6}} {{u}} {{\sin\left(  u\right)}}}}}{{u}^{4}}}}} + {{{\frac{{{{2}} {{\cos\left(  u\right)}}}{-{{{{u}^{2}}} {{\cos\left(  u\right)}}}} + {{{2}} {{u}} {{\sin\left(  u\right)}}}}{{u}^{3}}}} {{\frac{{-{{{{u}^{3}}} {{\cos\left(  u\right)}}}}{-{{{6}} {{\sin\left(  u\right)}}}} + {{{3}} {{{u}^{2}}} {{\sin\left(  u\right)}}} + {{{6}} {{u}} {{\cos\left(  u\right)}}}}{{u}^{4}}}}}}{{\left({\frac{\sqrt{{4} + {{u}^{2}} + {{u}^{4}}}}{{u}^{3}}}\right)}^{2}}$
+
+    Observe o resultado:
+
+    ![curva](codigos/imgs/3d-4.svg) 
+

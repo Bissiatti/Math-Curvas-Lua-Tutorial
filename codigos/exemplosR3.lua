@@ -16,6 +16,7 @@ print(triedro)
 -- print(symmath.export.LaTeX(f))
 -- print(symmath.export.LaTeX(CurvaturaR3(f,u)))
 -- print(symmath.export.LaTeX(TorcaoR3(f,u)))
+-- print(symmath.export.LaTeX(triedro))
 
 -- criar o triedo em um ponto
 

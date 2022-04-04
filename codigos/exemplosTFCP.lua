@@ -1,18 +1,14 @@
 local gnuplot = require 'gnuplot'
 require('symmath').setup()
-
 require("curvaFuncoes")
 
 local curvatura = 0
-
 local curva = CurvaDeCurvaturaR2(curvatura)
 
 print(curva)
-
 print(symmath.export.LaTeX(curva))
 
 curva = Array2GnuPlotR2(curva)
-
 
 -- Plot
 

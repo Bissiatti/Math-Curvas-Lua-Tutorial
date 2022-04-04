@@ -120,9 +120,9 @@ function CurvaturaR3(c,var)
 
     return k/n^3
 end
--- Função curvatura, calcula a torção (em R^3) de uma curva c em função de t.
+-- Função torção, calcula a torção (em R^3) de uma curva c em função de t.
 -- Recebe curva c regular três vezes diferenciável, e a variável var
--- Retorna sua curvatura
+-- Retorna sua torção
 function TorcaoR3(c,var)
     -- var, é opcional, caso o usuario não passe (valor = nil) substitue por u:
     local var = var or vars("u")
