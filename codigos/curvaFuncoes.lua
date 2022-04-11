@@ -4,7 +4,7 @@ require('symmath').setup()
 function Array2GnuPlotR2(arr,var)
     local t = vars("t")
     if var then
-        arr = symmath.replace(var, t, arr)
+        arr = symmath.replace(arr, var, t)
     end
     arr = symmath.export.GnuPlot(arr)
     return string.sub(arr,2,#arr-1)
@@ -13,12 +13,11 @@ end
 function Array2GnuPlotR3(arr,var)
     local u = vars("u")
     if var then
-        arr = symmath.replace(var, u, arr)
+        arr = symmath.replace(arr, var, u)
     end
     arr = symmath.export.GnuPlot(arr)
     return string.sub(arr,2,#arr-1)
 end
-
 function ProdutoEscalar(a,b)
     local result = 0;
     for index, value in ipairs(a) do
