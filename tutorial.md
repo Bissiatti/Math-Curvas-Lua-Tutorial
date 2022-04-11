@@ -8,7 +8,6 @@ O tutorial foi testado no Ubuntu e também funciona no Windows com Ubuntu/WSL (n
 
 Para esse tutorial é preciso instalar as seguintes linguagens e programas
 
-
 * [Linguagem de programação brasileira Lua,](https://www.lua.org/)
 * [GnuPlot para desenhar os gráficos das funções matemáticas,](http://www.gnuplot.info/)
 * [luarocks um gerenciador de pacotes para lua.](https://luarocks.org/)
@@ -55,48 +54,47 @@ print "Hello World"
 
 Em lua temos os seguintes tipos de dados primitivos, qualquer dúvida recomendo a consulta ao [manual oficial da linguagem,](https://www.lua.org/manual/5.1/pt/manual.html) disponível em português.
 
-* 1	
-nil
+* 1
+  nil
 
 Usado para diferenciar o valor de ter alguns dados ou nenhum dado (nulo).
 
-* 2	
-boolean
+* 2
+  boolean
 
 Inclui verdadeiro e falso como valores. Geralmente usado para verificação de condições.
 
-* 3	
-number
+* 3
+  number
 
 Representa números reais (ponto flutuante de precisão dupla).
 
-* 4	
-string
+* 4
+  string
 
 Representa matriz de caracteres.
 
-* 5	
-function
+* 5
+  function
 
 Representa um método escrito em C ou Lua.
 
-* 6	
-userdata
+* 6
+  userdata
 
 Representa dados C arbitrários.
 
-* 7	
-thread
+* 7
+  thread
 
 Representa threads de execução independentes e é usado para implementar co-rotinas.
 
-* 8	
-table
+* 8
+  table
 
 Representa matrizes comuns, tabelas de símbolos, conjuntos, registros, gráficos, árvores, etc., e implementa matrizes associativas. Ele pode conter qualquer valor (exceto nulo).
 
 Fonte [ Manual de Referência de Lua 5.1](https://www.lua.org/manual/5.1/pt/manual.html)
-
 
 ### Definição de variáveis e funções
 
@@ -201,7 +199,7 @@ end
 
 Saída:
 
-```bash 
+```bash
 1       10
 2       b
 3       c
@@ -209,7 +207,9 @@ Saída:
 t2      2
 t1      1
 ```
+
 Também é possível iterar apenas pelos indices numéricos, como se fosse uma lista.
+
 ```lua
 for index, value in pairs(myTable) do
     print(index,value)
@@ -218,7 +218,7 @@ end
 
 Entretanto, esse método termina no primeiro índice nulo, o 7 índice não foi iterado, veja:
 
-```bash 
+```bash
 1       10
 2       b
 3       c
@@ -228,7 +228,6 @@ Entretanto, esse método termina no primeiro índice nulo, o 7 índice não foi 
 
 Já vimos como iterar sobre uma table, veja outras formas de iterações conhecidas:
 
-
 ```lua
 -- No for, primeiro determina a variável de iteração com o seu valor final,
 -- em seguida o valor final e por fim o valor que será acrescentado a cada iteração.
@@ -236,7 +235,9 @@ for i=0,3,0.5 do
     print(i)
 end
 ```
+
 Veja a saída
+
 ```bash
 0.0
 0.5
@@ -246,6 +247,7 @@ Veja a saída
 2.5
 3.0
 ```
+
 ```lua
 -- O While segue a mesma lógica de outras linguagens, veja a sintaxe.
 while true do
@@ -260,7 +262,7 @@ Com essas informações iniciais sobre a linguagem lua, já é possível entende
 
 ## Symmath Gnuplot para curvas.
 
-Antes de utilizar as bibliotecas para o desenvolvimento de curvas, é importante comentar algumas funções que nos serão úteis. 
+Antes de utilizar as bibliotecas para o desenvolvimento de curvas, é importante comentar algumas funções que nos serão úteis.
 
 Symmath é uma biblioteca desenvolvida originalmente para física computacional, implementando funções e manipulações algébricas em lua. Essa biblioteca é muito versátil: ela é capaz transformar as funções matemáticas em funções computacionais escritas em lua, funções como uma string, uma fórmula escrita em LaTex ou exportar como uma função de plot do GnuPlot.
 
@@ -277,6 +279,7 @@ local gnuplot = require('gnuplot')
 
 -- No caso acima, eu renomeie a biblioteca, como o "as" do python
 ```
+
 ### Funções de matemática simbólica
 
 O código seguinte, está disponível na pasta "./codigos/calculo.lua". Esse código são algumas operações úteis para trabalhar com matemática simbólica voltado para curvas.
@@ -355,15 +358,17 @@ print("Calculo do determinante da Matriz transposta:")
 
 print(Mt:determinant())
 ```
+
 Saida esperada no terminal
+
 ```
 Função f:
 \alpha * sin(x)
 
 Definindo a derivada:
-  ∂                  
+  ∂                
 ╶──╴(\alpha * sin(x))
- ∂x                  
+ ∂x                
 Derivada calculada de f
 \alpha * cos(x)
 
@@ -396,7 +401,6 @@ Matriz transposta:
 Calculo do determinante da Matriz transposta:
  - 3 * x + 4 * y
 ```
-
 
 ### Exportando as expressões simbólicas.
 
@@ -431,6 +435,7 @@ print("Imprimido alguns valores da função")
 
 print("x=0","f(x)="..funcLua(0),"x=pi/2","f(x)="..funcLua(math.pi/2),"x=pi","f(x)="..funcLua(math.pi))
 ```
+
 Saida esperada:
 
 ```
@@ -448,6 +453,7 @@ end
 Imprimido alguns valores da função
 x=0     f(x)=0.0        x=pi/2  f(x)=3.1415926535898    x=pi    f(x)=3.1415926535898
 ```
+
 ### Gráficos de funções com GnuPlot.
 
 A biblioteca gnuplot é resumidamente uma função para chamar o gnuplot de terminal dentro do lua. Então, tudo que o gnuplot faz é possível fazer com essa biblioteca, veja alguns exemplos:
@@ -534,7 +540,7 @@ gnuplot(toPlot)
 Da saida do terminal temos:
 
 ```
- 2            
+ 2          
 x  - 2 * x + 5
 (x ** 2.) + -2. * x + 5.
 x=-10.0 y=125.0
@@ -554,10 +560,9 @@ E os pontos da função quadrática.
 
 Nos exemplos acima exemplifiquei as ferramentas com plots de funções matemáticas. Agora, vamos estudar curvas paramétricas em $R^2$ e como representá-las no ambiente computacional.
 
-<b>Definição 1:</b> Uma curva parametrizada em $R^n$ é uma aplicação $\delta: I \to R^n$ sendo $I \subset R$
+`<b>`Definição 1:`</b>` Uma curva parametrizada em $R^n$ é uma aplicação $\delta: I \to R^n$ sendo $I \subset R$
 
 Por padrão, o GnuPlot trabalha com a variável t para o plot de uma curva parametrizada. Sendo assim, vamos trabalhar com a variável t para parametrizadas as curvas.
-
 
 Então, no plano cartesiano em $R^2$ vamos trabalhar com a representação da curva como:
 
@@ -602,6 +607,7 @@ gnuplot({
     {alphaPlot},
 })
 ```
+
 Saida esperada do terminal
 
 ```
@@ -614,36 +620,36 @@ Saida esperada do terminal
 {t, (t ** 2.) + -2. * t + 5.}
 t, (t ** 2.) + -2. * t + 5.
 ```
+
 Veja o traço da curva:
 
 ![Parabola](codigos/imgs/parabola.svg)
 
 Agora vamos aprender um pouco mais sobre curvas:
 
-<b>Definição 2:</b> Vetor tangente.
+`<b>`Definição 2:`</b>` Vetor tangente.
 
 Seja $\alpha: I \to R^n$, tal que $\alpha(t)=(\alpha_1(t),\alpha_2(t),...,\alpha_n(t))$ com cada $\alpha(t)_i$ diferenciáveis, o vetor $\alpha(t)'=(\alpha_1'(t),\alpha_2'(t),...,\alpha_n'(t))$ é chamado de vetor tangente (também conhecido como vetor velocidade).
 
-
-<b>Definição 3:</b> Curva regular.
+`<b>`Definição 3:`</b>` Curva regular.
 
 Seja $\alpha(t):= I \to R^n$ uma curva parametrizada e diferenciável, se $\alpha'(t) \ne 0$, $\forall t \in I$ então a curva $\alpha(t)$ é dita regular.
 
-<b>Definição 3:</b> Comprimento de arco.
+`<b>`Definição 3:`</b>` Comprimento de arco.
 
 O comprimento da curva diferenciável $\alpha(t):= I \to R^n$  entre os pontos $a$ e $b$ é matematicamente definido por:
 
 $\int _a ^b ||\alpha'(t)||dt$
 
-<b>Definição 4:</b> Unit Speed.
+`<b>`Definição 4:`</b>` Unit Speed.
 
 Seja $\alpha(t): I \to R^n$ uma curva regular diferenciável. Se a norma do vetor velocidade: $||\alpha(t)'||=1$, então a curva possuiu velocidade unitária
 
-<b>Definição 5:</b> Reparametrização.
+`<b>`Definição 5:`</b>` Reparametrização.
 
 Uma curva $\beta(t)$ é dita uma reparametrização de $\alpha(t): I \to R^n$ quando dados $I_0$ e quando $\phi(s): I \to I_0$ é um difeomorfismo ($\phi(s)$ é derivável e bijetiva com $\phi(s)^{-1}$ sendo derivável).
 
-<b>Teorema:</b> Reparametrização por comprimento de arco.
+`<b>`Teorema:`</b>` Reparametrização por comprimento de arco.
 
 Seja $\alpha(t): I \to R^n$ uma curva regular diferenciável e seja $\phi(t)$ a função comprimento de arco $\phi(t)=\int _{t_0} ^t ||\alpha'(t)||dt$. Então, $\alpha(t)$ pode ser reparametrizada como $\beta(s)=\alpha(\phi(t))$ tal que $||\beta(s)'||=1$.
 
@@ -689,17 +695,18 @@ function Reparametrizacao(c,var)
     return symmath.replace(c, t, sol)
 end
 ```
+
 Agora, vamos estudar a taxa de variação da tangente de uma curva através da curvatura.
 
-<b>Definição 5:</b> Curvatura sem sinal para curvas unit speed.
+`<b>`Definição 5:`</b>` Curvatura sem sinal para curvas unit speed.
 
 Seja $\alpha(t): I \to R^n$ uma curva regular duas vezes diferenciável em unit-speed. Sua curvatura $k(t)$ é definida como:
 
 $k(t)=|\alpha''(t)|$
 
-<b>Teorema:</b> Curvatura com sinal para qualquer curva regular em $R^2$.
+`<b>`Teorema:`</b>` Curvatura com sinal para qualquer curva regular em $R^2$.
 
-Seja $\alpha(t): I \to R^2$ uma curva regular. Se $\alpha(t)$ é duas vezes diferenciável, então sua curvatura é definida por: 
+Seja $\alpha(t): I \to R^2$ uma curva regular. Se $\alpha(t)$ é duas vezes diferenciável, então sua curvatura é definida por:
 
 $k(t)=\dfrac{det([\alpha'(t),\alpha''(t)])}{||\alpha'(t)||^3}$
 
@@ -727,17 +734,18 @@ function CurvaturaR2(c,var)
     return ((dif1[1]*dif2[2])-(dif1[2]*dif2[1]))/(u)^3
 end
 ```
+
 Em $R^2$ sabemos que qualquer curva pode ser definida a partir de sua curvatura e de um ponto inicial, como afirma o Teorema Fundamental (local) das Curvas Planas.
 
-<b>Definição:</b> Movimento Rígido:
+`<b>`Definição:`</b>` Movimento Rígido:
 
 Seja $F:R^n\to R^n$ uma aplicação. Se $F$ preserva distância, isto é, $||x−y||=||F(x)−F(y)||$, $\forall x,y \in R^n$ então $F$ é um movimento rígido.
 
-<b>Teorema:</b> Teorema Fundamental (Local) das Curvas Planas.
+`<b>`Teorema:`</b>` Teorema Fundamental (Local) das Curvas Planas.
 
 Seja $k(t)$ a curvatura de uma curva plana $\alpha(t)$. Então $\alpha(t)$ pode ser definida por $k(t)$ a um movimento rígido.
 
-Se $\theta(s)=\int k(t)dt$. 
+Se $\theta(s)=\int k(t)dt$.
 
 Logo, $\alpha(t)=\int[cos(\theta(t)),sin(\theta(s))]dt$
 
@@ -767,163 +775,177 @@ Após definir as funções, veja a aplicação dessas funções em algumas curva
 
 * Circulo não unit-speed:
 
-    $c(t)=\left[ \begin{matrix} {{5}} {{\cos\left(  t\right)}} && {{5}} {{\sin\left(  t\right)}}\end{matrix} \right]$
-    
-    ![circulo](codigos/imgs/curva1.svg)
+  $c(t)=\left[ \begin{matrix} {{5}} {{\cos\left(  t\right)}} && {{5}} {{\sin\left(  t\right)}}\end{matrix} \right]$
 
-    Com comprimento de arco de: ${{5}} {{t}}$
+  ![circulo](codigos/imgs/curva1.svg)
 
-    Vamos reparametrizar por comprimento de arco com a função 
+  Com comprimento de arco de: ${{5}} {{t}}$
 
-    $c2(t)=\left[ \begin{matrix} {{5}} {{\cos\left( {{\frac{1}{5}} {t}}\right)}} && {{5}} {{\sin\left( {{\frac{1}{5}} {t}}\right)}}\end{matrix} \right]$
-    
-    ![circulo](codigos/imgs/curva2.svg) 
+  Vamos reparametrizar por comprimento de arco com a função
 
+  $c2(t)=\left[ \begin{matrix} {{5}} {{\cos\left( {{\frac{1}{5}} {t}}\right)}} && {{5}} {{\sin\left( {{\frac{1}{5}} {t}}\right)}}\end{matrix} \right]$
 
-    ```lua
-    local gnuplot = require 'gnuplot'
-    require('symmath').setup()
+  ![circulo](codigos/imgs/curva2.svg)
 
-    require("curvaFuncoes")
+  ```lua
+  local gnuplot = require 'gnuplot'
+  require('symmath').setup()
 
-    local t = vars("t")
+  require("curvaFuncoes")
 
-    local e = Array(5*cos(t),5*sin(t))
+  local t = vars("t")
 
-    -- Exportando para latex
-    -- print(symmath.export.LaTeX(e))
-    -- print(symmath.export.LaTeX(ComprimentoDeArco(e)))
+  local e = Array(5*cos(t),5*sin(t))
 
-    -- e2 é a curva reparametrizada
-    local e2 = Reparametrizacao(e)
+  -- Exportando para latex
+  -- print(symmath.export.LaTeX(e))
+  -- print(symmath.export.LaTeX(ComprimentoDeArco(e)))
 
-    -- print(symmath.export.LaTeX(e2))
+  -- e2 é a curva reparametrizada
+  local e2 = Reparametrizacao(e)
 
-    local ePlot = Array2GnuPlotR2(e)
-    local ePlot2 = Array2GnuPlotR2(e2)
+  -- print(symmath.export.LaTeX(e2))
 
-    -- Criando vetores alpha'(t) e alpha''(t) 
-    local x0,y0,x1,y1={},{},{},{}
-    local ed = e:diff(t)()
-    local edd = ed:diff(t)()
-    local eFunc = e:compile({t})
-    ed = ed:compile({t})
-    edd = edd:compile({t})
+  local ePlot = Array2GnuPlotR2(e)
+  local ePlot2 = Array2GnuPlotR2(e2)
 
-
-    for i = 0, 6.30, 0.5 do
-        local p0 = eFunc(i)
-        table.insert(x0,p0[1])
-        table.insert(y0,p0[2])
-        local p1 = ed(i)
-        table.insert(x1,p1[1])
-        table.insert(y1,p1[2])
-        
-        table.insert(x0,p0[1])
-        table.insert(y0,p0[2])
-        local p2 = edd(i)
-        table.insert(x1,p2[1])
-        table.insert(y1,p2[2])
-
-    end
-
-    local toPlot = {
-        --persist = true,
-        "set term svg",
-        "set grid",
-        "set parametric",
-        "set trange [-pi:pi]",
-        "set xrange [-8:8]",
-        "set yrange [-8:8]",
-        output="imgs/curva1.svg",
-        {ePlot},
-        style = 'data vector',
-        data = {
-            x0,
-            y0,
-            x1,
-            y1,
-        },
-        {using = '1:2:3:4'},
-    }
-
-    gnuplot(toPlot)
-
-    -- Criando vetores alpha'(t) e alpha''(t) 
-    x0,y0,x1,y1={},{},{},{}
-
-    local ed2 = e2:diff(t)()
-    local edd2 = ed2:diff(t)()
-    local eFunc2 = e2:compile({t})
-    ed2 =  ed2:compile({t})
-    edd2 = edd2:compile({t})
+  -- Criando vetores alpha'(t) e alpha''(t) 
+  local x0,y0,x1,y1={},{},{},{}
+  local ed = e:diff(t)()
+  local edd = ed:diff(t)()
+  local eFunc = e:compile({t})
+  ed = ed:compile({t})
+  edd = edd:compile({t})
 
 
-    for i = 0, 2*math.pi*5, 2 do
-        local p0 = eFunc2(i)
-        table.insert(x0,p0[1])
-        table.insert(y0,p0[2])
-        local p1 = ed2(i)
-        table.insert(x1,p1[1])
-        table.insert(y1,p1[2])
-        
-        table.insert(x0,p0[1])
-        table.insert(y0,p0[2])
-        local p2 = edd2(i)
-        table.insert(x1,p2[1])
-        table.insert(y1,p2[2])
-    end
+  for i = 0, 6.30, 0.5 do
+      local p0 = eFunc(i)
+      table.insert(x0,p0[1])
+      table.insert(y0,p0[2])
+      local p1 = ed(i)
+      table.insert(x1,p1[1])
+      table.insert(y1,p1[2])
+
+      table.insert(x0,p0[1])
+      table.insert(y0,p0[2])
+      local p2 = edd(i)
+      table.insert(x1,p2[1])
+      table.insert(y1,p2[2])
+
+  end
+
+  local toPlot = {
+      --persist = true,
+      "set term svg",
+      "set grid",
+      "set parametric",
+      "set trange [-pi:pi]",
+      "set xrange [-8:8]",
+      "set yrange [-8:8]",
+      output="imgs/curva1.svg",
+      {ePlot},
+      style = 'data vector',
+      data = {
+          x0,
+          y0,
+          x1,
+          y1,
+      },
+      {using = '1:2:3:4'},
+  }
+
+  gnuplot(toPlot)
+
+  -- Criando vetores alpha'(t) e alpha''(t) 
+  x0,y0,x1,y1={},{},{},{}
+
+  local ed2 = e2:diff(t)()
+  local edd2 = ed2:diff(t)()
+  local eFunc2 = e2:compile({t})
+  ed2 =  ed2:compile({t})
+  edd2 = edd2:compile({t})
 
 
-    local toPlot = {
-        --persist = true,
-        "set term svg",
-        "set grid",
-        "set parametric",
-        "set trange [-pi*5:pi*5]",
-        "set xrange [-8:8]",
-        "set yrange [-8:8]",
-        output="imgs/curva2.svg",
-        {ePlot2},
-        style = 'data vector',
-        data = {
-            x0,
-            y0,
-            x1,
-            y1,
-        },
-        {using = '1:2:3:4'},
-    }
+  for i = 0, 2*math.pi*5, 2 do
+      local p0 = eFunc2(i)
+      table.insert(x0,p0[1])
+      table.insert(y0,p0[2])
+      local p1 = ed2(i)
+      table.insert(x1,p1[1])
+      table.insert(y1,p1[2])
 
-    gnuplot(toPlot)
-    ```
+      table.insert(x0,p0[1])
+      table.insert(y0,p0[2])
+      local p2 = edd2(i)
+      table.insert(x1,p2[1])
+      table.insert(y1,p2[2])
+  end
 
-    * Lamniscata:
 
-    $\alpha(t)=\left[ \begin{matrix} \cos\left(  t\right) &&{{\sin\left(  t\right)}} {{\cos\left(  t\right)}}\end{matrix} \right]$
+  local toPlot = {
+      --persist = true,
+      "set term svg",
+      "set grid",
+      "set parametric",
+      "set trange [-pi*5:pi*5]",
+      "set xrange [-8:8]",
+      "set yrange [-8:8]",
+      output="imgs/curva2.svg",
+      {ePlot2},
+      style = 'data vector',
+      data = {
+          x0,
+          y0,
+          x1,
+          y1,
+      },
+      {using = '1:2:3:4'},
+  }
 
-    Com comprimento de arco:
-    $\int{{\sqrt{{-{1}} + {{\cos\left(  t\right)}^{2}} + {{\cos\left(  t\right)}^{4}}{-{{{3}} {{{\cos\left(  t\right)}^{2}}} {{{\sin\left(  t\right)}^{2}}}}} + {{{3}} {{{\sin\left(  t\right)}^{2}}}}}}}d t$
+  gnuplot(toPlot)
+  ```
+* Lamniscata:
 
-    Observe que o comprimento de arco possuiu ma integral difícil de calcular sem métodos numéricos, nessa abordagem só trabalhei com métodos simbólicos.
+  $\alpha(t)=\left[ \begin{matrix} \cos\left(  t\right) &&{{\sin\left(  t\right)}} {{\cos\left(  t\right)}}\end{matrix} \right]$
 
-    Já a curvatura da lamniscata:
+  Com comprimento de arco:
+  $\int{{\sqrt{{-{1}} + {{\cos\left(  t\right)}^{2}} + {{\cos\left(  t\right)}^{4}}{-{{{3}} {{{\cos\left(  t\right)}^{2}}} {{{\sin\left(  t\right)}^{2}}}}} + {{{3}} {{{\sin\left(  t\right)}^{2}}}}}}}d t$
 
-    $k(t)= \frac{{ {-{\sin\left(  t\right)}} \cdot  {-{{{4}} {{\cos\left(  t\right)}} {{\sin\left(  t\right)}}}}}{-{{{\left({{\cos\left(  t\right)} + {\sin\left(  t\right)}}\right)}} {{\left({{\cos\left(  t\right)}{-{\sin\left(  t\right)}}}\right)}} \cdot  {-{\cos\left(  t\right)}}}}}{{\sqrt{{-{1}} + {{\cos\left(  t\right)}^{2}} + {{\cos\left(  t\right)}^{4}}{-{{{3}} {{{\cos\left(  t\right)}^{2}}} {{{\sin\left(  t\right)}^{2}}}}} + {{{3}} {{{\sin\left(  t\right)}^{2}}}}}}^{3}}$ 
+  Observe que o comprimento de arco possuiu ma integral difícil de calcular sem métodos numéricos, nessa abordagem só trabalhei com métodos simbólicos.
 
-    ![curva](codigos/imgs/curva-2.svg) 
+  Já a curvatura da lamniscata:
 
-Quando definimos a curvatura, queríamos que ela possuiu algumas propriedades, como a curvatura de uma reta é nula e a curvatura de uma circunferência é constante diferente de 0. 
+  $k(t)= \frac{{ {-{\sin\left(  t\right)}} \cdot  {-{{{4}} {{\cos\left(  t\right)}} {{\sin\left(  t\right)}}}}}{-{{{\left({{\cos\left(  t\right)} + {\sin\left(  t\right)}}\right)}} {{\left({{\cos\left(  t\right)}{-{\sin\left(  t\right)}}}\right)}} \cdot  {-{\cos\left(  t\right)}}}}}{{\sqrt{{-{1}} + {{\cos\left(  t\right)}^{2}} + {{\cos\left(  t\right)}^{4}}{-{{{3}} {{{\cos\left(  t\right)}^{2}}} {{{\sin\left(  t\right)}^{2}}}}} + {{{3}} {{{\sin\left(  t\right)}^{2}}}}}}^{3}}$
+
+  ![curva](codigos/imgs/curva-2.svg)
+
+  Veja a lamniscata com os vetores da velocidade e aceleração;
+
+  ![curva](codigos/imgs/curva-4.svg)
+* Tangente
+
+  Seja $\alpha(t)=\left[ \begin{matrix} \tan\left( {{\frac{1}{2}} {t}}\right) && {\frac{1}{2}} {t}\end{matrix} \right]$
+
+    Sua curvatura é:
+
+$k(t)=\dfrac{{-{{{\frac{1}{2}}} {{\frac{{{\left({{{\sin\left( {{\frac{1}{2}} {t}}\right)}^{2}} + {{\cos\left( {{\frac{1}{2}} {t}}\right)}^{2}}}\right)}}{{\sin\left( {{\frac{1}{2}} {t}}\right)}}}{{{2}} {{{\cos\left( {{\frac{1}{2}} {t}}\right)}^{3}}}}}}}}}{{\left({\frac{\sqrt{{2} + {{{{\cos\left( {{\frac{1}{2}} {t}}\right)}^{2}}} {{{\sin\left( {{\frac{1}{2}} {t}}\right)}^{2}}}}{-{{\sin\left( {{\frac{1}{2}} {t}}\right)}^{2}}}{-{{{2}} {{{\cos\left( {{\frac{1}{2}} {t}}\right)}^{2}}}}} + {{{2}} {{{\cos\left( {{\frac{1}{2}} {t}}\right)}^{4}}}}}}{{{2}} {{{\cos\left( {{\frac{1}{2}} {t}}\right)}^{2}}}}}\right)}^{3}}$
+
+
+
+
+Veja a curva com os vetores  $\alpha'(t)$ e $\alpha''(t)$
+
+    ![curva](codigos/imgs/curva-5.svg)
+
+Quando definimos a curvatura, queríamos que ela possuiu algumas propriedades, como a curvatura de uma reta é nula e a curvatura de uma circunferência é constante diferente de 0.
 
 * Encontrar uma reta a partir de $k(t)=0$
 
-    Utilizando a função 
-    `
-     CurvaDeCurvaturaR2(curvatura)
-    `
-    obtive a curva: $\alpha(t)=\left[ \begin{matrix} t && 0\end{matrix} \right]$, veja:
+  Utilizando a função
+  `CurvaDeCurvaturaR2(curvatura)`
+  obtive a curva: $\alpha(t)=\left[ \begin{matrix} t && 0\end{matrix} \right]$, veja:
 
-![curva](codigos/imgs/curvatura-1.svg) 
+![curva](codigos/imgs/curvatura-1.svg)
 
 Código para obter essa curva está disponível em "codigos\exemplosTFCP.lua", veja:
 
@@ -955,23 +977,20 @@ local toPlot = {
 gnuplot(toPlot)
 ```
 
-
-
 * Encontrar a curva após a curvatura:
 
-    Seja $\alpha(t)=\left[ \begin{matrix}{{2}}  {{\cos\left(  t\right)}} && {{2}} {{\sin\left(  t\right)}}\end{matrix} \right]$
+  Seja $\alpha(t)=\left[ \begin{matrix}{{2}}  {{\cos\left(  t\right)}} && {{2}} {{\sin\left(  t\right)}}\end{matrix} \right]$
 
-    Sua curvatura é: $\frac{-1}{4}$
+  Sua curvatura é: $\frac{-1}{4}$
 
-    Já a curva dada pela curvatura é:
+  Já a curva dada pela curvatura é:
 
-    $\beta(t)=\left[ \begin{matrix} {{2}} {{\sin\left( {{\frac{1}{2}} {t}}\right)}} && -{{{2}} {{\cos\left( {{\frac{1}{2}} {t}}\right)}}}\end{matrix} \right]$
+  $\beta(t)=\left[ \begin{matrix} {{2}} {{\sin\left( {{\frac{1}{2}} {t}}\right)}} && -{{{2}} {{\cos\left( {{\frac{1}{2}} {t}}\right)}}}\end{matrix} \right]$
 
-    Repare que é equivalente a primeira curva exceto por um movimento rígido. Observe os traços das curvas:
+  Repare que é equivalente a primeira curva exceto por um movimento rígido. Observe os traços das curvas:
 
-    ![curva](codigos/imgs/curvatura-2.svg) 
-    ![curva](codigos/imgs/curvatura-3.svg) 
- 
+  ![curva](codigos/imgs/curvatura-2.svg)
+  ![curva](codigos/imgs/curvatura-3.svg)
 
 ### Trabalhando com curvas paramétricas em $R^3$
 
@@ -979,7 +998,7 @@ A maior parte do que foi definido sobre as curvas no $R^2$ é válido para as cu
 
 Se $\alpha(t): I \to R^3$ é uma curva duas vezes diferenciável, regular e unit speed sua curvatura corresponde ao $||\alpha(t)''||$, caso não seja regular, sua curvatura será:
 
-<b>Teorema:</b> Curvatura sem sinal para qualquer curva regular em $R^3$:
+`<b>`Teorema:`</b>` Curvatura sem sinal para qualquer curva regular em $R^3$:
 
 Se $\alpha(t): I \to R^3$ é uma curva duas vezes diferenciável e regular, sua curvatura pode ser calculada como:
 
@@ -987,13 +1006,13 @@ $k(t)=\dfrac{||\alpha'(t)\times \alpha''(t)||}{||\alpha(t)'||^3}$
 
 A torção ($\tau$) é uma propriedade que mede o quanto uma curva se projeta para fora do plano de curvatura em $R^3$, uma curva pode aproximar-se ou afastar-se do vetor normal.
 
-<b>Definição:</b> Torção para uma curva regular em $R^3$:
+`<b>`Definição:`</b>` Torção para uma curva regular em $R^3$:
 
 Se $\alpha(t): I \to R^3$ é uma curva três vezes diferenciável e regular, então sua torção é definida como:
 
 $\tau(t)=\dfrac{(\alpha'(t)\times \alpha''(t)) \cdot \alpha'''(t)}{||\alpha'(t)\times \alpha''(t)||^2}$
 
-<b>Definição:</b> Triedro de Frenet para uma curva 2-regular em $R^3$:
+`<b>`Definição:`</b>` Triedro de Frenet para uma curva 2-regular em $R^3$:
 
 Se $\alpha(t): I \to R^3$ é uma curva três vezes diferenciável, 2-regular e parametrizada por comprimento de arco, então o Triedro de Frenet, uma base ortogonal no ponto $P \in \alpha(t)$ é definida como:
 
@@ -1067,11 +1086,11 @@ end
 
 Observe a espiral $\alpha(u)=\left[ \begin{matrix} \sin\left(  u\right) &&& \cos\left(  u\right) && u\end{matrix} \right]$
 
-Possuiu curvatura: 
+Possuiu curvatura:
 
 $k(u)=\dfrac{\sqrt{2}}{{\sqrt{2}}^{3}} = \dfrac{1}{\sqrt(2)}$
 
-E torção: 
+E torção:
 
 $\tau(u)=\dfrac{{{-{\cos\left(  u\right)}}{{\cos\left(  u\right)}}} + { {-{\sin\left(  u\right)}} {{\sin\left(  u\right)}}} + {0}}{{\sqrt{2}}^{2}}=\dfrac{-1}{2}$
 
@@ -1081,7 +1100,7 @@ $\left[ \begin{matrix}  \frac{\cos\left( {\frac{u}{\sqrt{2}}}\right)}{\sqrt{2}} 
 
 Veja a curva e o Triedro de Frenet em um ponto.
 
-![circulo](codigos/imgs/3d.svg) 
+![circulo](codigos/imgs/3d.svg)
 
 A seguir o código que calculou essas informações, (disponível em "codigos/exemplosR3.lua")
 
@@ -1149,55 +1168,53 @@ gnuplot(toPlot)
 
 * Circulo no plano $z=1$:
 
-    $\alpha(u)=\left[ \begin{matrix} \cos\left(  u\right) && \sin\left(  u\right) && 1\end{matrix} \right]$
+  $\alpha(u)=\left[ \begin{matrix} \cos\left(  u\right) && \sin\left(  u\right) && 1\end{matrix} \right]$
 
-    Curvatura constante igual a:
+  Curvatura constante igual a:
 
-    $k(u)=1$
+  $k(u)=1$
 
-    Com torção igual a:
+  Com torção igual a:
 
-    $\tau(u)=0$
+  $\tau(u)=0$
 
-    E triedro igual a: 
+  E triedro igual a:
 
-    $\left[ \begin{matrix}  -{\sin\left(  u\right)} &  \cos\left(  u\right) &  0 \\  -{\cos\left(  u\right)} &  -{\sin\left(  u\right)} &  0 \\  0 &  0 &  -{1}\end{matrix} \right]$
+  $\left[ \begin{matrix}  -{\sin\left(  u\right)} &  \cos\left(  u\right) &  0 \\  -{\cos\left(  u\right)} &  -{\sin\left(  u\right)} &  0 \\  0 &  0 &  -{1}\end{matrix} \right]$
 
-    Veja o gráfico com o triedro:
+  Veja o gráfico com o triedro:
 
-    ![circulo](codigos/imgs/3d-2.svg) 
-
+  ![circulo](codigos/imgs/3d-2.svg)
 * Exemplo curva sem nome:
 
-    Seja $\alpha(u)=\left[ \begin{matrix} -{{u}^{2}} && u && \cos\left(  u\right)\end{matrix} \right]$
+  Seja $\alpha(u)=\left[ \begin{matrix} -{{u}^{2}} && u && \cos\left(  u\right)\end{matrix} \right]$
 
-    Possuiu curvatura
-    
-    $k(u)=\dfrac{\sqrt{{8}{-{{{3}} {{{\cos\left(  u\right)}^{2}}}}} + {{{4}} {{{u}^{2}}} {{{\cos\left(  u\right)}^{2}}}}{-{{{8}} {{u}} {{\sin\left(  u\right)}} {{\cos\left(  u\right)}}}}}}{{\sqrt{{2}{-{{\cos\left(  u\right)}^{2}}} + {{{4}} {{{u}^{2}}}}}}^{3}}$
+  Possuiu curvatura
 
-    E torção:
+  $k(u)=\dfrac{\sqrt{{8}{-{{{3}} {{{\cos\left(  u\right)}^{2}}}}} + {{{4}} {{{u}^{2}}} {{{\cos\left(  u\right)}^{2}}}}{-{{{8}} {{u}} {{\sin\left(  u\right)}} {{\cos\left(  u\right)}}}}}}{{\sqrt{{2}{-{{\cos\left(  u\right)}^{2}}} + {{{4}} {{{u}^{2}}}}}}^{3}}$
 
-    $\tau(u)=\dfrac{{{{2}} {{\sin\left(  u\right)}}}}{{\sqrt{{8}{-{{{3}} {{{\cos\left(  u\right)}^{2}}}}} + {{{4}} {{{u}^{2}}} {{{\cos\left(  u\right)}^{2}}}}{-{{{8}} {{u}} {{\sin\left(  u\right)}} {{\cos\left(  u\right)}}}}}}^{2}}$
+  E torção:
 
-    Veja o gráfico curioso:
+  $\tau(u)=\dfrac{{{{2}} {{\sin\left(  u\right)}}}}{{\sqrt{{8}{-{{{3}} {{{\cos\left(  u\right)}^{2}}}}} + {{{4}} {{{u}^{2}}} {{{\cos\left(  u\right)}^{2}}}}{-{{{8}} {{u}} {{\sin\left(  u\right)}} {{\cos\left(  u\right)}}}}}}^{2}}$
 
-    ![curva](codigos/imgs/3d-3.svg) 
+  Veja o gráfico curioso:
 
-    * Mais um exemplo:
+  ![curva](codigos/imgs/3d-3.svg)
 
-    Seja a curva:
+  * Mais um exemplo:
 
-    $\alpha(u)=\left[ \begin{matrix} {{\frac{1}{u}}} {{\cos\left(  u\right)}} && {{\frac{1}{u}}} {{\sin\left(  u\right)}} && u\end{matrix} \right]$
+  Seja a curva:
 
-    Com curvatura igual a:
+  $\alpha(u)=\left[ \begin{matrix} {{\frac{1}{u}}} {{\cos\left(  u\right)}} && {{\frac{1}{u}}} {{\sin\left(  u\right)}} && u\end{matrix} \right]$
 
-    $k(u)=\dfrac{\dfrac{\sqrt{{4} + {{u}^{2}} + {{u}^{4}}}}{{u}^{3}}}{{\left({\dfrac{\sqrt{{1} + {{u}^{2}} + {{u}^{4}}}}{{u}^{2}}}\right)}^{3}}$
+  Com curvatura igual a:
 
-    E torção:
+  $k(u)=\dfrac{\dfrac{\sqrt{{4} + {{u}^{2}} + {{u}^{4}}}}{{u}^{3}}}{{\left({\dfrac{\sqrt{{1} + {{u}^{2}} + {{u}^{4}}}}{{u}^{2}}}\right)}^{3}}$
 
-    $\dfrac{{{{\frac{{-{{{2}} {{\sin\left(  u\right)}}}} + {{{{u}^{2}}} {{\sin\left(  u\right)}}} + {{{2}} {{u}} {{\cos\left(  u\right)}}}}{{u}^{3}}}} {{\frac{{{{{u}^{3}}} {{\sin\left(  u\right)}}}{-{{{6}} {{\cos\left(  u\right)}}}} + {{{3}} {{{u}^{2}}} {{\cos\left(  u\right)}}}{-{{{6}} {{u}} {{\sin\left(  u\right)}}}}}{{u}^{4}}}}} + {{{\frac{{{{2}} {{\cos\left(  u\right)}}}{-{{{{u}^{2}}} {{\cos\left(  u\right)}}}} + {{{2}} {{u}} {{\sin\left(  u\right)}}}}{{u}^{3}}}} {{\frac{{-{{{{u}^{3}}} {{\cos\left(  u\right)}}}}{-{{{6}} {{\sin\left(  u\right)}}}} + {{{3}} {{{u}^{2}}} {{\sin\left(  u\right)}}} + {{{6}} {{u}} {{\cos\left(  u\right)}}}}{{u}^{4}}}}}}{{\left({\frac{\sqrt{{4} + {{u}^{2}} + {{u}^{4}}}}{{u}^{3}}}\right)}^{2}}$
+  E torção:
 
-    Observe o resultado:
+  $\dfrac{{{{\frac{{-{{{2}} {{\sin\left(  u\right)}}}} + {{{{u}^{2}}} {{\sin\left(  u\right)}}} + {{{2}} {{u}} {{\cos\left(  u\right)}}}}{{u}^{3}}}} {{\frac{{{{{u}^{3}}} {{\sin\left(  u\right)}}}{-{{{6}} {{\cos\left(  u\right)}}}} + {{{3}} {{{u}^{2}}} {{\cos\left(  u\right)}}}{-{{{6}} {{u}} {{\sin\left(  u\right)}}}}}{{u}^{4}}}}} + {{{\frac{{{{2}} {{\cos\left(  u\right)}}}{-{{{{u}^{2}}} {{\cos\left(  u\right)}}}} + {{{2}} {{u}} {{\sin\left(  u\right)}}}}{{u}^{3}}}} {{\frac{{-{{{{u}^{3}}} {{\cos\left(  u\right)}}}}{-{{{6}} {{\sin\left(  u\right)}}}} + {{{3}} {{{u}^{2}}} {{\sin\left(  u\right)}}} + {{{6}} {{u}} {{\cos\left(  u\right)}}}}{{u}^{4}}}}}}{{\left({\frac{\sqrt{{4} + {{u}^{2}} + {{u}^{4}}}}{{u}^{3}}}\right)}^{2}}$
 
-    ![curva](codigos/imgs/3d-4.svg) 
+  Observe o resultado:
 
+  ![curva](codigos/imgs/3d-4.svg)
